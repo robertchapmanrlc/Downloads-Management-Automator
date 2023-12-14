@@ -27,7 +27,28 @@ videos_extensions = [".mp4", ".mov"]
 # Extensions for various other types of files
 misc_extensions = [".pdf", ".pptx", ".docx", ".zip", ".txt", ".doc", ".csv"]
 
-def move_file(file, dest):
+# This function creates a unique name for a file that already exists
+def make_unique_name(name, dest):
+    # Parse the filename and extension
+    filename, extension = os.path.splitext(name)
+    counter = 1
+
+    # Keep incrementing counter until the name with the nth copy doesn't already exists
+    while os.path.exists(f"{dest}/{name}"):
+        name = f"{filename}({str(counter)}){extension}"
+        counter += 1
+
+    return name
+
+# This function moves the file with the given name to the destination
+def move_file(name, file, dest):
+    # If the file already exists, then rename it
+    if os.path.exists(f"{dest}/{name}"):
+        unique_name = make_unique_name(name, dest)
+        old_name = os.path.join(dest, name)
+        new_name = os.path.join(dest, unique_name)
+        os.rename(old_name, new_name)
+
     shutil.move(file, dest)
 
 # Class that handles FileSystem events
@@ -45,28 +66,28 @@ class MoveHandler(FileSystemEventHandler):
     def handle_image_files(self, file, name):
         for extension in images_extensions:
             if name.endswith(extension):
-                move_file(file, images_destination_folder)
+                move_file(name, file, images_destination_folder)
                 logging.info(f"Moved image file: {name}")
 
     # This method detects and move audio files
     def handle_audio_files(self, file, name):
         for extension in audio_extensions:
             if name.endswith(extension):
-                move_file(file, audio_destination_folder)
+                move_file(name, file, audio_destination_folder)
                 logging.info(f"Moved audio file: {name}")
 
     # This method detects and move video files
     def handle_video_files(self, file, name):
         for extension in videos_extensions:
             if name.endswith(extension):
-                move_file(file, video_destination_folder)
+                move_file(name, file, video_destination_folder)
                 logging.info(f"Moved video file: {name}")
 
     # This method detects and move various miscellaneous files
     def handle_misc_files(self, file, name):
         for extension in misc_extensions:
             if name.endswith(extension):
-                move_file(file, misc_destination_folder)
+                move_file(name, file, misc_destination_folder)
                 logging.info(f"Moved file: {name}")
 
 # Use the watchdog library to detect changes in the file system and move files
