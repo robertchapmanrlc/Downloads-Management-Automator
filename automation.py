@@ -27,37 +27,47 @@ videos_extensions = [".mp4", ".mov"]
 # Extensions for various other types of files
 misc_extensions = [".pdf", ".pptx", ".docx", ".zip", ".txt", ".doc", ".csv"]
 
+def move_file(file, dest):
+    shutil.move(file, dest)
+
 # Class that handles FileSystem events
 class MoveHandler(FileSystemEventHandler):
     # This method will be ran whenever a file is moved into the "source_folder"
     def on_modified(self, event):
         with os.scandir(source_folder) as files:
             for file in files:
-                self.handle_image_files(file.name)
+                self.handle_image_files(file, file.name)
+                self.handle_audio_files(file, file.name)
+                self.handle_video_files(file, file.name)
+                self.handle_misc_files(file, file.name)
     
     # This method detects and move images files
-    def handle_image_files(self, name):
+    def handle_image_files(self, file, name):
         for extension in images_extensions:
             if name.endswith(extension):
-                print(f"moving image file: {name}")
+                move_file(file, images_destination_folder)
+                logging.info(f"Moved image file: {name}")
 
     # This method detects and move audio files
-    def handle_audio_files(self, name):
+    def handle_audio_files(self, file, name):
         for extension in audio_extensions:
             if name.endswith(extension):
-                print(f"moving audio file: {name}")
+                move_file(file, audio_destination_folder)
+                logging.info(f"Moved audio file: {name}")
 
     # This method detects and move video files
-    def handle_video_files(self, name):
+    def handle_video_files(self, file, name):
         for extension in videos_extensions:
             if name.endswith(extension):
-                print(f"moving video file: {name}")
+                move_file(file, video_destination_folder)
+                logging.info(f"Moved video file: {name}")
 
     # This method detects and move various miscellaneous files
-    def handle_misc_files(self, name):
+    def handle_misc_files(self, file, name):
         for extension in misc_extensions:
             if name.endswith(extension):
-                print(f"moving file: {name}")
+                move_file(file, misc_destination_folder)
+                logging.info(f"Moved file: {name}")
 
 # Use the watchdog library to detect changes in the file system and move files
 if __name__ == "__main__":
