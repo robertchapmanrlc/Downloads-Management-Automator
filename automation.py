@@ -1,15 +1,16 @@
 # Libraries needed for the script
-import os
+from os import scandir, rename
+from os.path import exists, join, splitext
 import time
 import shutil
 import logging
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
-# Folder to observe
+# Folder to observe (Use absolute path)
 source_folder = ""
 
-# Destination folders for images, videos, audio files, and other files
+# Destination folders for images, videos, audio files, and other files (Use absolute path)
 images_destination_folder = ""
 audio_destination_folder = ""
 video_destination_folder = ""
@@ -30,11 +31,11 @@ misc_extensions = [".pdf", ".pptx", ".docx", ".zip", ".txt", ".doc", ".csv"]
 # This function creates a unique name for a file that already exists
 def make_unique_name(name, dest):
     # Parse the filename and extension
-    filename, extension = os.path.splitext(name)
+    filename, extension = splitext(name)
     counter = 1
 
     # Keep incrementing counter until the name with the nth copy doesn't already exists
-    while os.path.exists(f"{dest}/{name}"):
+    while exists(f"{dest}/{name}"):
         name = f"{filename}({str(counter)}){extension}"
         counter += 1
 
@@ -43,11 +44,11 @@ def make_unique_name(name, dest):
 # This function moves the file with the given name to the destination
 def move_file(name, file, dest):
     # If the file already exists, then rename it
-    if os.path.exists(f"{dest}/{name}"):
+    if exists(f"{dest}/{name}"):
         unique_name = make_unique_name(name, dest)
-        old_name = os.path.join(dest, name)
-        new_name = os.path.join(dest, unique_name)
-        os.rename(old_name, new_name)
+        old_name = join(dest, name)
+        new_name = join(dest, unique_name)
+        rename(old_name, new_name)
 
     shutil.move(file, dest)
 
@@ -55,7 +56,7 @@ def move_file(name, file, dest):
 class MoveHandler(FileSystemEventHandler):
     # This method will be ran whenever a file is moved into the "source_folder"
     def on_modified(self, event):
-        with os.scandir(source_folder) as files:
+        with scandir(source_folder) as files:
             for file in files:
                 self.handle_image_files(file, file.name)
                 self.handle_audio_files(file, file.name)
