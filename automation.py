@@ -81,8 +81,6 @@ class MoveHandler(FileSystemEventHandler):
                         self.handle_video_files(file, filename)
                     case 'misc':
                         self.handle_misc_files(file, filename)
-                    case _:
-                        print(f"{extension} file type not supported for {filename}")
     
     # This method detects and move images files
     def handle_image_files(self, file, name):
