@@ -43,9 +43,9 @@ python automation.py
 6. When finished, stop the program with ```Ctrl + C``` or ```Control (or Ctrl) ⌃ + C``` for MacOS
 
 ### Note
-Please keep in mind that you may also have to include more file extensions in the supported ```extensions``` lists if an extension is not recognized
+Please keep in mind that you may also have to include more file extensions in the supported ```extensions``` lists if an extension is not recognized.
 
-Built With
+### Built With
 * [Python](https://www.python.org/) - The programming language used.
 * [watchdog](https://pypi.org/project/watchdog/) - API Library used to observe changes in a filesystem.
 
